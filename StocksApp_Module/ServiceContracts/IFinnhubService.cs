@@ -11,7 +11,7 @@ namespace ServiceContracts
 
         Task<Dictionary<string, object>?> GetCompanyProfile(string stockSymbol, CancellationToken cancellationToken = default);
 
-        Task<Dictionary<string, object>?> GetStockPriceQuote(string stockSymbol);
+        Task<Dictionary<string, object>?> GetStockPriceQuote(string stockSymbol, CancellationToken cancellationToken = default);
 
 
     }

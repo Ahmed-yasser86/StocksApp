@@ -1,7 +1,7 @@
-﻿using ServiceContracts;
+﻿using Microsoft.Extensions.Configuration; 
+using ServiceContracts;
 using System.Net.Http;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration; 
 
 namespace Services
 {
@@ -37,9 +37,33 @@ namespace Services
         }
 
 
-        public Task<Dictionary<string, object>?> GetStockPriceQuote(string stockSymbol)
+        public async Task<Dictionary<string, object>?> GetStockPriceQuote(string stockSymbol, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(stockSymbol))
+                throw new ArgumentNullException(nameof(stockSymbol));
+
+            var token = _configuration["TradingOptions:FinnhubToken"];
+
+            var response = await _httpClient.GetAsync(
+                $"https://finnhub.io/api/v1/quote?symbol={stockSymbol}&token={token}",
+                cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            var responseDictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(responseBody);
+
+            if (Convert.ToDouble(responseDictionary["c"].ToString()) == 0)
+                return null;
+
+            return (responseDictionary == null || responseDictionary.Count == 0) ? null : responseDictionary;
+
+
         }
+
+
+
+
     }
 }

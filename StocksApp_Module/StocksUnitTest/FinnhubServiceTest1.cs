@@ -35,6 +35,9 @@ namespace StocksUnitTest
             _finnhubService = new FinnhubService(httpClient, _configuration);
         }
 
+        #region GetCompanyProfile
+
+
         //  PRIVATE HELPER (The "Cleaner" Method) 
         private void MockHttpResponse(HttpStatusCode statusCode, string content)
         {
@@ -125,5 +128,106 @@ namespace StocksUnitTest
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => _finnhubService.GetCompanyProfile("AAPL"));
         }
+
+        #endregion
+
+
+        #region GetStockPriceQuote
+
+        [Fact]
+        public async Task GetStockPriceQuote_NullOrEmpty_ShouldThrowException()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _finnhubService.GetStockPriceQuote(null!));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _finnhubService.GetStockPriceQuote(""));
+        }
+
+        [Fact]
+        public async Task GetStockPriceQuote_ProperStockSymbol_ShouldReturnData()
+        {
+            // Arrange
+            string mockJson = "{\"c\":235.87,\"d\":9.12,\"dp\":4.0221,\"h\":236.6,\"l\":226.06,\"o\":226.24,\"pc\":226.75,\"t\":1666987204}";
+            MockHttpResponse(HttpStatusCode.OK, mockJson);
+
+            // Act
+            var result = await _finnhubService.GetStockPriceQuote("AAPL");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("235.87", result!["c"].ToString());
+            Assert.Equal("236.6", result["h"].ToString());
+            Assert.Equal("226.06", result["l"].ToString());
+        }
+
+        [Fact]
+        public async Task GetStockPriceQuote_InvalidStockSymbol_ShouldReturnNull()
+        {
+            MockHttpResponse(HttpStatusCode.OK, "{\"c\":0,\"d\":null,\"dp\":null}");
+
+            // Act
+            var result = await _finnhubService.GetStockPriceQuote("INVALID");
+
+            // Assert
+            Assert.Null(result);
+
+        }
+
+        [Fact]
+        public async Task GetStockPriceQuote_WhenApiKeyIsInvalid_ShouldThrowException()
+        {
+            // Arrange
+            MockHttpResponse(HttpStatusCode.Unauthorized, "Invalid API Key");
+
+            // Act & Assert
+            await Assert.ThrowsAsync<HttpRequestException>(() => _finnhubService.GetStockPriceQuote("MSFT"));
+        }
+
+        [Fact]
+        public async Task GetStockPriceQuote_WhenServerIsDown_ShouldThrowException()
+        {
+            // Arrange
+            _handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ThrowsAsync(new HttpRequestException("No network connection"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<HttpRequestException>(() => _finnhubService.GetStockPriceQuote("MSFT"));
+        }
+
+        #endregion
+
+
+        #region GetStockPriceQuote Edge Cases
+
+        [Fact]
+        public async Task GetStockPriceQuote_WhenPriceIsZero_ShouldReturnNull()
+        {
+            // Arrange
+            // Case: Symbol exists but the API returns all zeros (no real trading data available)
+            string mockJson = "{\"c\":0,\"d\":null,\"dp\":null,\"h\":0,\"l\":0,\"o\":0,\"pc\":0,\"t\":0}";
+            MockHttpResponse(HttpStatusCode.OK, mockJson);
+
+            // Act
+            var result = await _finnhubService.GetStockPriceQuote("SYMBOL_WITH_NO_DATA");
+
+            // Assert
+            // The service should interpret a current price of 0 as "No Data" and return null
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetStockPriceQuote_WhenResponseIsMalformed_ShouldThrowException()
+        {
+            // Arrange
+            // Case: The API returns broken or invalid JSON
+            MockHttpResponse(HttpStatusCode.OK, "{ \"invalid\": \"data\" "); // Missing closing brace
+
+            // Act & Assert
+            // Expecting a JsonException or general Exception depending on your error handling
+            await Assert.ThrowsAnyAsync<Exception>(() => _finnhubService.GetStockPriceQuote("AAPL"));
+        }
+
+        #endregion
+
     }
 }
