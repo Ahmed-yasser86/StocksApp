@@ -9,18 +9,20 @@ namespace ServiceContracts.DTO
     public class SellOrderResponse
     {
 
-        Guid SellOrderID;
+        public Guid SellOrderID { set; get; }
 
-        string StockSymbol;
+        public string StockSymbol { set; get; }
 
-        string StockName;
+        public string StockName { set; get; }
 
-        DateTime DateAndTimeOfOrder;
+        public DateTime DateAndTimeOfOrder { set; get; }
 
-        uint Quantity;
+        public uint Quantity { set; get; }
 
-        double Price;
+        public double Price { set; get; }
 
-        double TradeAmount;
+        public double TradeAmount { set; get; }
+    
+        }
+
     }
-}

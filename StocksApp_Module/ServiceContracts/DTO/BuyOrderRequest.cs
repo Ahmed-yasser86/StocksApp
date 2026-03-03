@@ -10,17 +10,30 @@ namespace ServiceContracts.DTO
     public class BuyOrderRequest
     {
         [Required]
-        string StockSymbol;
+       public string StockSymbol { set; get; }
 
         [Required]
-        string StockName;
+      public  string StockName { set; get; }
 
-        DateTime DateAndTimeOfOrder;
+   public     DateTime DateAndTimeOfOrder { set; get; }
         [Range(1, 100000)]
-        uint Quantity;//[Value should be between 1 and 100000]
+     public   uint Quantity { set; get; }//[Value should be between 1 and 100000]
 
         [Range(1, 100000)]
-        double Price;//
+      public  double Price { set; get; }//
+
+
+
+        public async Task<BuyOrderResponse> ConvertToBuyOrederRespones()
+        {
+
+
+            return new BuyOrderResponse { BuyOrderID = Guid.NewGuid(), 
+                DateAndTimeOfOrder= DateAndTimeOfOrder, 
+                Price=this.Price, Quantity=Quantity,StockName=StockName,
+                StockSymbol=StockSymbol,TradeAmount= (double)Price*(double)Quantity };
+        }
+
 
     }
 }

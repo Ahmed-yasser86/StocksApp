@@ -6,18 +6,19 @@ namespace Entities
     {
 
         [Key]
-        Guid BuyOrderID;
+    public    Guid BuyOrderID { set; get; }
+
         [Required]
-        string StockSymbol;
-        
+     public   string StockSymbol { set; get; }
+
         [Required]
-        string StockName;
-        
-        DateTime DateAndTimeOfOrder;
+    public    string StockName { set; get; }
+
+        DateTime DateAndTimeOfOrder { set; get; }
         [Range(1,100000)]
-        uint Quantity;//[Value should be between 1 and 100000]
+       public uint Quantity;//[Value should be between 1 and 100000]
        
         [Range(1,100000)]
-        double Price;//
+       public double Price { set; get; }//
     }
 }
