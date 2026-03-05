@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration; 
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using ServiceContracts;
+using StocksApp2;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -8,12 +10,11 @@ namespace Services
     public class FinnhubService : IFinnhubService
     {
         private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
-
-        public FinnhubService(HttpClient httpClient, IConfiguration configuration)
+        private readonly IOptions<TradingOptions> _tradingOps;
+        public FinnhubService(HttpClient httpClient, IOptions<TradingOptions> TradOps)
         {
             _httpClient = httpClient;
-            _configuration = configuration; 
+            _tradingOps = TradOps;
         }
 
         public async Task<Dictionary<string, object>?> GetCompanyProfile(string stockSymbol, CancellationToken cancellationToken = default)
@@ -21,7 +22,7 @@ namespace Services
             if (string.IsNullOrEmpty(stockSymbol))
                 throw new ArgumentNullException(nameof(stockSymbol));
 
-            var token = _configuration["TradingOptions:FinnhubToken"];
+            var token = _tradingOps.Value.FinnhubToken;
 
             var response = await _httpClient.GetAsync(
                 $"https://finnhub.io/api/v1/stock/profile2?symbol={stockSymbol}&token={token}",
@@ -42,7 +43,7 @@ namespace Services
             if (string.IsNullOrEmpty(stockSymbol))
                 throw new ArgumentNullException(nameof(stockSymbol));
 
-            var token = _configuration["TradingOptions:FinnhubToken"];
+            var token = _tradingOps.Value.FinnhubToken;
 
             var response = await _httpClient.GetAsync(
                 $"https://finnhub.io/api/v1/quote?symbol={stockSymbol}&token={token}",

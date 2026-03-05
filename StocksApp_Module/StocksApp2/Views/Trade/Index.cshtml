@@ -1,0 +1,33 @@
+﻿@model StockTrade
+
+<h2>@Model.StockName (@Model.StockSymbol)</h2>
+<h3>Price: $<span id="stockPrice">@Model.Price</span></h3>
+
+<input type="hidden" id="stockSymbol" value="@Model.StockSymbol" />
+
+<script>
+    const token = '@ViewBag.FinnhubToken';  // use token from appsettings
+    const symbol = document.getElementById("stockSymbol").value;
+
+    const socket = new WebSocket(`wss://ws.finnhub.io?token=${token}`);
+
+    socket.addEventListener("open", () => {
+        socket.send(JSON.stringify({ type: "subscribe", symbol: symbol }));
+    });
+
+    socket.addEventListener("message", (event) => {
+        const response = JSON.parse(event.data);
+        if (response.type === "trade" && response.data && response.data.length > 0) {
+            let maxPrice = response.data[0].p;
+            response.data.forEach(trade => {
+                if (trade.p > maxPrice) maxPrice = trade.p;
+            });
+            document.getElementById("stockPrice").innerText = maxPrice.toFixed(2);
+        }
+    });
+
+    window.addEventListener("beforeunload", () => {
+        socket.send(JSON.stringify({ type: "unsubscribe", symbol: symbol }));
+        socket.close();
+    });
+</script>

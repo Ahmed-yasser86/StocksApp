@@ -1,6 +1,8 @@
-﻿using ServiceContracts;
+﻿using Microsoft.Extensions.Options;
+using ServiceContracts;
 using ServiceContracts.DTO;
 using Servicess.Helpers;
+using StocksApp2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +13,22 @@ namespace Services
 {
     public class StocksService : IStocksService
     {
+        private readonly IOptions<TradingOptions> _tradingOptions;
+
         private readonly IFinnhubService _finnhubService;
         List<BuyOrderResponse> buyOrderResponsesList;
-        public   StocksService(IFinnhubService finnhubService) { 
+        
+        public   StocksService(IFinnhubService finnhubService ) { 
         
         _finnhubService = finnhubService;
 
          buyOrderResponsesList = new List<BuyOrderResponse>();
+
+
         }
 
-
-
+        // impppportantttttttttttttttttttttttttttttttttttttttttt!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // don't forget adding cancellition token when u add EF Core layer 
         public async Task<BuyOrderResponse> CreateBuyOrder(BuyOrderRequest? buyOrderRequest)
         {
             if(buyOrderRequest == null)
