@@ -18,8 +18,8 @@ namespace CRUDTests
         private readonly ICountryServices _countryServices;
         public PersonServicesTest()
         {
-            _personServices = new Servicess.PersonServices();
-            _countryServices = new Servicess.CountryServices();
+            _personServices = new Servicess.PersonServices(false);
+            _countryServices = new Servicess.CountryServices(false);
         }
 
         #region AddPerson Tests

@@ -14,7 +14,7 @@ namespace CRUDTests
 
         public CountryServiceTest()
         {
-            _countryServices = new Servicess.CountryServices();
+            _countryServices = new Servicess.CountryServices(true);
         }
 
 

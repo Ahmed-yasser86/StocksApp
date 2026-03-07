@@ -7,10 +7,23 @@ namespace Servicess
     public class CountryServices : ICountryServices
     {
        private readonly List<Country> countries;
-        public CountryServices() {
-
+        public CountryServices(bool generateFakeData = true)
+        {
             countries = new List<Country>();
+
+            if (generateFakeData)
+            {
+                countries.AddRange(new List<Country>
+            {
+                new Country { CountryId = Guid.Parse("7C9E6645-3677-448A-95B7-511B41F17491"), CountryName = "Japan" },
+                new Country { CountryId = Guid.Parse("A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6"), CountryName = "Canada" },
+                new Country { CountryId = new Guid("4A91B323-6902-4D3E-B147-3A2F6990C254"), CountryName = "Norway" },
+                new Country { CountryId = new Guid("99C6A23D-8D1E-4E90-95B6-03B576C75F71"), CountryName = "Australia" },
+                new Country { CountryId = new Guid("F2345B12-1111-4A55-89CC-5521AABBCCDD"), CountryName = "Brazil" }
+            });
+            }
         }
+            
 
         public List<CountryResponse> Countries()
         {

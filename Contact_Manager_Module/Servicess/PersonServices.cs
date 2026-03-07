@@ -18,12 +18,78 @@ namespace Servicess
 
         private readonly List<Person> _persons;
         private readonly ICountryServices _countryServices;
-        public PersonServices()
+        public PersonServices(bool generateFakeData = true)
         {
             _persons = new List<Person>();
-            _countryServices = new CountryServices();
-        }
+            _countryServices = new CountryServices(generateFakeData);
 
+            if (generateFakeData)
+            {
+                _persons.AddRange(new List<Person>
+            {
+                new Person
+                {
+                    PersonId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                    Name = "Alice Smith",
+                    DateOfBirth = new DateTime(1990, 5, 15),
+                    email = "alice@example.com",
+                    phone = "555-0101",
+                    Gender = "Female",
+                    NewsLetter = true,
+                    Address = "123 Sakura St",
+                    CountryId = Guid.Parse("7C9E6645-3677-448A-95B7-511B41F17491") // Linked to Japan
+                },
+                new Person
+                {
+                    PersonId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    Name = "Bob Johnson",
+                    DateOfBirth = new DateTime(1985, 11, 2),
+                    email = "bob@maple.ca",
+                    phone = "555-0202",
+                    Gender = "Male",
+                    NewsLetter = false,
+                    Address = "456 Maple Rd",
+                    CountryId = Guid.Parse("A1B2C3D4-E5F6-47A8-B9C0-D1E2F3A4B5C6") // Linked to Canada
+                },
+                new Person
+                {
+                    PersonId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    Name = "Charlie Davis",
+                    DateOfBirth = new DateTime(1995, 7, 22),
+                    email = "charlie@nordic.no",
+                    phone = "555-0303",
+                    Gender = "Female",
+                    NewsLetter = true,
+                    Address = "789 Fjord Ln",
+                    CountryId = Guid.Parse("4A91B323-6902-4D3E-B147-3A2F6990C254") // Linked to Norway
+                },
+                new Person
+                {
+                    PersonId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                    Name = "Diana Prince",
+                    DateOfBirth = new DateTime(1988, 3, 10),
+                    email = "diana@outback.au",
+                    phone = "555-0404",
+                    Gender = "Female",
+                    NewsLetter = true,
+                    Address = "321 Outback Way",
+                    CountryId = Guid.Parse("99C6A23D-8D1E-4E90-95B6-03B576C75F71") // Linked to Australia
+                },
+                new Person
+                {
+                    PersonId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                    Name = "Eduardo Gomes",
+                    DateOfBirth = new DateTime(1992, 12, 25),
+                    email = "edu@rio.br",
+                    phone = "555-0505",
+                    Gender = "Male",
+                    NewsLetter = false,
+                    Address = "654 Samba Blvd",
+                    CountryId = Guid.Parse("F2345B12-1111-4A55-89CC-5521AABBCCDD") // Linked to Brazil
+                }
+            });
+            }
+        }
 
 
         public PersonRespones AddPerson(PersonAddRequest? personAddRequest)

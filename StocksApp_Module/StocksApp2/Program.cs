@@ -1,9 +1,14 @@
 using ServiceContracts;
 using Services;
+using Servicess;
 using StocksApp2;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<ICountryServices, CountryServices>();
+builder.Services.AddSingleton<IPersonServices, PersonServices>();
+
 
 
 builder.Services.AddHttpClient<IFinnhubService, FinnhubService>(); 
