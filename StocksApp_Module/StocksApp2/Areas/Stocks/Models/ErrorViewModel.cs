@@ -1,4 +1,4 @@
-namespace GUI___Presentetion_Layer.Models
+namespace StocksApp2.Areas.Stocks.Models
 {
     public class ErrorViewModel
     {

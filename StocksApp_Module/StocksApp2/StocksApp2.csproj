@@ -8,9 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Contact_Manager_Module\Entities\Entities.csproj" />
+    <ProjectReference Include="..\..\Contact_Manager_Module\ServiceContracts\ServiceContracts.csproj" />
     <ProjectReference Include="..\..\Contact_Manager_Module\Servicess\Servicess.csproj" />
-    <ProjectReference Include="..\ServiceContracts\ServiceContracts.csproj" />
+    <ProjectReference Include="..\Entities\EntitiesContacts.csproj" />
+    <ProjectReference Include="..\ServiceContracts\ServiceContractsContacts.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Contacts\Models\" />
   </ItemGroup>
 
 </Project>

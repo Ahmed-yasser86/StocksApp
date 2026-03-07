@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Entities\Entities.csproj" />
-    <ProjectReference Include="..\ServiceContracts\ServiceContracts.csproj" />
+    <ProjectReference Include="..\Entities\EntitiesContacts.csproj" />
+    <ProjectReference Include="..\ServiceContracts\ServiceContractsContacts.csproj" />
   </ItemGroup>
 
 </Project>

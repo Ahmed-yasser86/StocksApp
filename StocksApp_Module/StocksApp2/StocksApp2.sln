@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ContactManagerModule", "Con
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StocksModule", "StocksModule", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "..\Entities\Entities.csproj", "{706FCD65-630C-4D6E-8DF1-F7F3AF73E4E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesContacts", "..\Entities\EntitiesContacts.csproj", "{706FCD65-630C-4D6E-8DF1-F7F3AF73E4E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceContracts", "..\ServiceContracts\ServiceContracts.csproj", "{60AB71C8-D741-44CB-86E5-DD807007D9A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceContractsContacts", "..\ServiceContracts\ServiceContractsContacts.csproj", "{60AB71C8-D741-44CB-86E5-DD807007D9A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "..\..\Contact_Manager_Module\Entities\Entities.csproj", "{D7773893-D550-16AF-DFEE-0277A62F1786}"
 EndProject

@@ -4,8 +4,10 @@ using Microsoft.Extensions.Options;
 using ServiceContracts;
 using System.Text.Json;
 
-namespace StocksApp2.Controllers
+namespace StocksApp2.Areas.StocksUIComponent.Controllers
 {
+
+    [Area("stcoks")]
     public class TradeController : Controller
     {
         private readonly IOptions<TradingOptions> _tradingOptions;

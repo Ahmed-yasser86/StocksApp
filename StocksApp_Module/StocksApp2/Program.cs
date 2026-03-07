@@ -21,7 +21,6 @@ if (builder.Environment.IsDevelopment())
 
 
 
-app.MapGet("/", () => "Hello World!");
 app.UseRouting();
 app.MapControllers();
 
