@@ -15,11 +15,44 @@ namespace StocksApp2.ContactComponent.Controllers
 
 
         private readonly IPersonServices _personServices;
-        public PersonController(IPersonServices personServices)
+        private readonly ICountryServices _countryServices;
+        public PersonController(IPersonServices personServices , ICountryServices countryServices)
         {
             _personServices = personServices;
+            _countryServices = countryServices;
         }
-        
+
+     
+        [Route("Person/Create")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            List<CountryResponse> countries = _countryServices.Countries();
+            ViewBag.Countries = countries;
+
+            return View();
+        }
+
+
+        [Route("Person/Create")]
+        [HttpPost]
+        public IActionResult Create(PersonAddRequest model)
+        {
+            List<CountryResponse> countries = _countryServices.Countries();
+            ViewBag.Countries = countries;
+
+            if (ModelState.IsValid)
+            {
+                _personServices.AddPerson(model);
+                return RedirectToAction("Index","Person");
+            }
+
+            ViewBag.ModelErrors = ModelState.Values.SelectMany(v => v.Errors);
+            return View(model);
+        }
+
+      
+
         [Route("Person/index")]
         [Route("/")]
         public IActionResult Index(string SearchBy,string SearchString,
