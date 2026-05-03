@@ -9,10 +9,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ICountryServices, CountryServices>();
 builder.Services.AddSingleton<IPersonServices, PersonServices>();
 
-
+// temp
+builder.Services.AddSingleton<IStocksService, StocksService>();
 
 builder.Services.AddHttpClient<IFinnhubService, FinnhubService>(); 
-builder.Services.AddScoped<IStocksService, StocksService>();
+//builder.Services.AddScoped<IStocksService, StocksService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<TradingOptions>(
@@ -29,6 +30,9 @@ if (builder.Environment.IsDevelopment())
 app.UseRouting();
 app.MapControllers();
 
+app.MapControllerRoute(
+    name: "MyAreas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

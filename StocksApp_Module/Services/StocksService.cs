@@ -16,13 +16,13 @@ namespace Services
         private readonly IOptions<TradingOptions> _tradingOptions;
 
         private readonly IFinnhubService _finnhubService;
-        List<BuyOrderResponse> buyOrderResponsesList;
+     private List<BuyOrderResponse> buyOrderResponsesList { set; get; }
         
-        public   StocksService(IFinnhubService finnhubService ) { 
+        public  StocksService(IFinnhubService finnhubService ) { 
         
         _finnhubService = finnhubService;
 
-         buyOrderResponsesList = new List<BuyOrderResponse>();
+      buyOrderResponsesList = new List<BuyOrderResponse>();
 
 
         }

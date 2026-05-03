@@ -22,5 +22,6 @@ namespace ServiceContracts
 
 
      public   bool DeletePersonByPersonId(Guid? personId);
+//object GetPersonByPersonId(int id);
     }
 }

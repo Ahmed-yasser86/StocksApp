@@ -133,8 +133,12 @@
                     <td>@person.CountryName</td>
 
                 <td>
-                    <a asp-action="Edit" asp-route-id="@person.PersonId" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-controller="Person" asp-area="Contacts" asp-action="Edit" asp-route-id="@person.PersonId" class="btn btn-sm btn-outline-primary">Edit</a>
                 </td>
+
+                    <td>
+                        <a asp-controller="Person" asp-area="Contacts" asp-action="Delete" asp-route-id="@person.PersonId" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
             </tr>
                         }
         </tbody>

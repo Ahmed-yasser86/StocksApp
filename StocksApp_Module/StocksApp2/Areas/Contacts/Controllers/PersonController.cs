@@ -51,7 +51,65 @@ namespace StocksApp2.ContactComponent.Controllers
             return View(model);
         }
 
-      
+
+        [HttpGet]
+        [Route("Person/Edit/{id}")]
+        public IActionResult Edit(Guid id) {
+
+            List<CountryResponse> countries = _countryServices.Countries();
+            ViewBag.Countries = countries;
+
+            PersonRespones? person = _personServices.GetPersonByPersonId(id);
+            PersonUpdateRequest? personUpadate =person?.ToPersonUpdateRequest();
+            if (person == null) {
+                return NotFound();
+            }
+            return View(personUpadate);
+        }
+
+
+        [HttpPost]
+        [Route("Person/Edit/{id}")]
+        public IActionResult Edit( PersonUpdateRequest model)
+        {
+            List<CountryResponse> countries = _countryServices.Countries();
+            ViewBag.Countries = countries;
+            if (ModelState.IsValid)
+            {
+                PersonRespones? updatedPerson = _personServices.UpdatePerson(model);
+                if (updatedPerson == null)
+                {
+                    return NotFound();
+                }
+                return RedirectToAction("Index", "Person");
+            }
+            ViewBag.ModelErrors = ModelState.Values.SelectMany(v => v.Errors);
+            return View(model);
+        }
+
+
+        [HttpGet]
+        [Route("Person/Delete/{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            var person = _personServices.GetPersonByPersonId(id);
+            if (person == null)
+            {
+                return RedirectToAction("Index", "Person");
+            }
+            return View(person);
+        }
+
+
+
+        [HttpPost]
+        [Route("Person/Delete/{id}")]
+        public IActionResult Delete( PersonRespones model)
+        {
+            bool isDeleted = _personServices.DeletePersonByPersonId(model.PersonId);
+
+            return RedirectToAction("Index", "Person");
+        }
 
         [Route("Person/index")]
         [Route("/")]
