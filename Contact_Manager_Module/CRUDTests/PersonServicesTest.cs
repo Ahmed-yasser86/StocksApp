@@ -1,13 +1,14 @@
 ﻿using Entities;
+using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTOs;
+using ServiceContracts.DTOs.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Entities;
-using ServiceContracts.DTOs.Enums;
 
 namespace CRUDTests
 {
@@ -16,10 +17,10 @@ namespace CRUDTests
 
         private readonly IPersonServices _personServices;
         private readonly ICountryServices _countryServices;
-        public PersonServicesTest()
+        public PersonServicesTest( ICountryServices countryServices)
         {
-            _personServices = new Servicess.PersonServices(false);
-            _countryServices = new Servicess.CountryServices(false);
+            _personServices = new Servicess.PersonServices(new PersonDBContext(new DbContextOptionsBuilder<PersonDBContext>().Options)) ;
+            _countryServices = new Servicess.CountryServices(new PersonDBContext(new DbContextOptionsBuilder<PersonDBContext>().Options));
         }
 
         #region AddPerson Tests

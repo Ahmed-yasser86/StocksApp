@@ -1,19 +1,29 @@
+using Entities;
 using ServiceContracts;
 using Services;
 using Servicess;
 using StocksApp2;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<ICountryServices, CountryServices>();
-builder.Services.AddSingleton<IPersonServices, PersonServices>();
+builder.Services.AddScoped<ICountryServices, CountryServices>();
+builder.Services.AddScoped<IPersonServices, PersonServices>();
 
 // temp
+/*
+ Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ContectManagerDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
+ 
+ */
 builder.Services.AddSingleton<IStocksService, StocksService>();
 
 builder.Services.AddHttpClient<IFinnhubService, FinnhubService>(); 
 //builder.Services.AddScoped<IStocksService, StocksService>();
+builder.Services.AddDbContext<PersonDBContext>(
+    Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("ContactDb")  )
+    );
+builder.Services.AddDbContext<PersonDBContext>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<TradingOptions>(
