@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using ServiceContracts.DTOs;
 using ServiceContracts.DTOs.Enums;
+using System.Threading.Tasks;
 
 namespace StocksApp2.ContactComponent.Controllers
 {
@@ -25,9 +26,9 @@ namespace StocksApp2.ContactComponent.Controllers
      
         [Route("Person/Create")]
         [HttpGet]
-        public IActionResult Create()
+        public async Task< IActionResult >Create()
         {
-            List<CountryResponse> countries = _countryServices.Countries();
+            List<CountryResponse> countries = await _countryServices.Countries();
             ViewBag.Countries = countries;
 
             return View();
@@ -36,9 +37,9 @@ namespace StocksApp2.ContactComponent.Controllers
 
         [Route("Person/Create")]
         [HttpPost]
-        public IActionResult Create(PersonAddRequest model)
+        public async Task<IActionResult> Create(PersonAddRequest model)
         {
-            List<CountryResponse> countries = _countryServices.Countries();
+            List<CountryResponse> countries = await _countryServices.Countries();
             ViewBag.Countries = countries;
 
             if (ModelState.IsValid)
@@ -54,12 +55,13 @@ namespace StocksApp2.ContactComponent.Controllers
 
         [HttpGet]
         [Route("Person/Edit/{id}")]
-        public IActionResult Edit(Guid id) {
+        public async Task<IActionResult> Edit(Guid id) {
 
-            List<CountryResponse> countries = _countryServices.Countries();
+            List<CountryResponse> countries = await _countryServices.Countries();
             ViewBag.Countries = countries;
 
-            PersonRespones? person = _personServices.GetPersonByPersonId(id);
+            PersonRespones? person = await _personServices.GetPersonByPersonId(id);
+
             PersonUpdateRequest? personUpadate =person?.ToPersonUpdateRequest();
             if (person == null) {
                 return NotFound();
@@ -70,13 +72,13 @@ namespace StocksApp2.ContactComponent.Controllers
 
         [HttpPost]
         [Route("Person/Edit/{id}")]
-        public IActionResult Edit( PersonUpdateRequest model)
+        public async Task<IActionResult> Edit( PersonUpdateRequest model)
         {
-            List<CountryResponse> countries = _countryServices.Countries();
+            List<CountryResponse> countries = await _countryServices.Countries();
             ViewBag.Countries = countries;
             if (ModelState.IsValid)
             {
-                PersonRespones? updatedPerson = _personServices.UpdatePerson(model);
+                PersonRespones? updatedPerson = await _personServices.UpdatePerson(model);
                 if (updatedPerson == null)
                 {
                     return NotFound();
@@ -90,9 +92,9 @@ namespace StocksApp2.ContactComponent.Controllers
 
         [HttpGet]
         [Route("Person/Delete/{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task< IActionResult> Delete(Guid id)
         {
-            var person = _personServices.GetPersonByPersonId(id);
+            var person = await _personServices.GetPersonByPersonId(id);
             if (person == null)
             {
                 return RedirectToAction("Index", "Person");
@@ -104,16 +106,16 @@ namespace StocksApp2.ContactComponent.Controllers
 
         [HttpPost]
         [Route("Person/Delete/{id}")]
-        public IActionResult Delete( PersonRespones model)
+        public async Task<IActionResult> Delete( PersonRespones model)
         {
-            bool isDeleted = _personServices.DeletePersonByPersonId(model.PersonId);
+            bool isDeleted =await _personServices.DeletePersonByPersonId(model.PersonId);
 
             return RedirectToAction("Index", "Person");
         }
 
         [Route("Person/index")]
         [Route("/")]
-        public IActionResult Index(string SearchBy,string SearchString,
+        public async Task<IActionResult> Index(string SearchBy,string SearchString,
             string SortedBy , sortedListOp  SortOption= sortedListOp.Ascending)
         {
 
@@ -136,9 +138,9 @@ namespace StocksApp2.ContactComponent.Controllers
 
             try
             {
-                var persons = _personServices.SearchPersonsBy( SearchString, SearchBy);
+                var persons = await _personServices.SearchPersonsBy( SearchString, SearchBy);
 
-                var SortedPersons = _personServices.getPersonsSorted(persons, SortedBy, SortOption);
+                var SortedPersons = await _personServices.getPersonsSorted(persons, SortedBy, SortOption);
                 return View(SortedPersons);
             }
             catch (Exception ex)

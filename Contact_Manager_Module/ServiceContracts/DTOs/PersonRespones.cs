@@ -83,18 +83,19 @@ namespace ServiceContracts.DTOs
             {
                 if (person == null) return null;
 
-                return new PersonRespones
-                {
-                    PersonId = person.PersonId,
-                    Name = person.Name,
-                    DateOfBirth = person.DateOfBirth,
-                    email = person.email,
-                    phone = person.phone,
-                    Gender = person.Gender,
-                    Address = person.Address,
-                    CountryId = person.CountryId,
-                    Age = person.DateOfBirth.HasValue ? DateTime.Now.Year - person.DateOfBirth.Value.Year : 0,
-                };
+            return new PersonRespones
+            {
+                PersonId = person.PersonId,
+                Name = person.Name,
+                DateOfBirth = person.DateOfBirth,
+                email = person.email,
+                phone = person.phone,
+                Gender = person.Gender,
+                Address = person.Address,
+                CountryId = person.CountryId,
+                Age = person.DateOfBirth.HasValue ? DateTime.Now.Year - person.DateOfBirth.Value.Year : 0,
+                CountryName = person.Country?.CountryName,
+            };
             }
         }
     }

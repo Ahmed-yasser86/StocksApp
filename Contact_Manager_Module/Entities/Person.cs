@@ -32,6 +32,8 @@ namespace Entities
         [StringLength(200)]
         public string ?Address { get; set; }
         public Guid CountryId { get; set; }
+
+        [ForeignKey("CountryId")]
         public Country? Country { get; set; }
     }
 }

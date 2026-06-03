@@ -14,15 +14,13 @@ namespace Servicess
 
           
         }
-            
 
-        public List<CountryResponse> Countries()
+        public async Task<List<CountryResponse>> Countries()
         {
-           
-            return db.Set<Country>().Select(country => country.ConvertToDto()).ToList();
+            return await db.Set<Country>().Select(country => country.ConvertToDto()).ToListAsync();
 
         }
-        public CountryResponse AddCountryRequest(CountryAddRequest? countryAddRequest)
+        public async Task<CountryResponse> AddCountryRequest(CountryAddRequest? countryAddRequest)
         {
 
 
@@ -39,24 +37,24 @@ namespace Servicess
             }
 
                 Country country = new Country();
-                country = countryAddRequest.ConvertToCountry();
-                country.CountryId = Guid.NewGuid();
-                db.Set<Country>().Add(country);
-            db.SaveChanges();
+            country = countryAddRequest.ConvertToCountry();
+            country.CountryId = Guid.NewGuid();
+            db.Set<Country>().Add(country);
+            await db.SaveChangesAsync();
 
 
 
             return country.ConvertToDto();
         }
 
-        public CountryResponse? GetCountryByCountryId(Guid? ID)
+        public async Task<CountryResponse?> GetCountryByCountryId(Guid? ID)
         {
 
             if (ID == null)
                 return null;
 
 
-            Country country = db.Set<Country>().FirstOrDefault(c => c.CountryId == ID);
+            Country country = await db.Set<Country>().FirstOrDefaultAsync(c => c.CountryId == ID);
             if (country == null)
                 return null;
 

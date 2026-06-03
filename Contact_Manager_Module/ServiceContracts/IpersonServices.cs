@@ -11,17 +11,16 @@ namespace ServiceContracts
     public interface IPersonServices
     {
 
-        public PersonRespones AddPerson(PersonAddRequest? personAddRequest);
-        public List<PersonRespones> GetAllPersons();
+        public  Task<PersonRespones> AddPerson(PersonAddRequest? personAddRequest);
+        public  Task<List<PersonRespones>> GetAllPersons();
 
-        public PersonRespones? GetPersonByPersonId(Guid? personId);
+        public  Task<PersonRespones?> GetPersonByPersonId(Guid? personId);
 
-        public List<PersonRespones> getPersonsSorted(List<PersonRespones> persons, string? sortBy, sortedListOp sortOrder);
-        public List<PersonRespones> SearchPersonsBy(string? SearchBy,string SearchString);
-        public PersonRespones? UpdatePerson(PersonUpdateRequest? personUpdateRequest);
+        public  Task<List<PersonRespones>> getPersonsSorted(List<PersonRespones> persons, string? sortBy, sortedListOp sortOrder);
+        public  Task<List<PersonRespones>> SearchPersonsBy(string? SearchBy,string SearchString);
+        public  Task<PersonRespones?> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 
-
-     public   bool DeletePersonByPersonId(Guid? personId);
+     public   Task<bool> DeletePersonByPersonId(Guid? personId);
 //object GetPersonByPersonId(int id);
     }
 }
