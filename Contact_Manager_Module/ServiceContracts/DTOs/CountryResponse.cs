@@ -33,7 +33,7 @@ namespace ServiceContracts.DTOs
 
     public static class ExtensionClass
     {
-        public static CountryResponse ConvertToDto(this Country country)
+        public static  CountryResponse ConvertToDto(this Country country)
         {
             return new CountryResponse
             {

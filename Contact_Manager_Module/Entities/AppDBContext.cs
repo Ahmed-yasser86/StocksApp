@@ -7,15 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Entities
 {
-    public class PersonDBContext : DbContext
+    public class AppDBContext : DbContext
     {
-        public PersonDBContext(DbContextOptions<PersonDBContext> options)
+        public AppDBContext(DbContextOptions<AppDBContext> options)
         : base(options)
         {
         }
 
-        public DbSet<Person> Persons { get; set; }
-        public DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Person> Persons { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

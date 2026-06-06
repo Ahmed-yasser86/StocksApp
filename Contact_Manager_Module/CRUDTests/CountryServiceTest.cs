@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using EntityFrameworkCoreMock;
 
 namespace CRUDTests
 {
@@ -22,7 +23,17 @@ namespace CRUDTests
 
         public CountryServiceTest()
         {
-            _countryServices = new Servicess.CountryServices(new PersonDBContext(new DbContextOptionsBuilder<PersonDBContext>().Options));
+
+            List<Country> countries = new List<Country>();
+            DbContextMock<AppDBContext> dbContextMock = new DbContextMock<AppDBContext>(new DbContextOptionsBuilder<AppDBContext>().Options);
+            AppDBContext db = dbContextMock.Object;
+           dbContextMock.CreateDbSetMock(temp => temp.Countries, countries);
+            _countryServices = new Servicess.CountryServices(null);
+
+            // _countryServices = new Servicess.CountryServices(new PersonDBContext(new DbContextOptionsBuilder<PersonDBContext>().Options));
+
+
+
         }
 
         #region AddCountryRequest Tests

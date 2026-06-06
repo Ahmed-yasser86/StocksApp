@@ -14,7 +14,6 @@ namespace StocksApp2.ContactComponent.Controllers
     {
 
 
-
         private readonly IPersonServices _personServices;
         private readonly ICountryServices _countryServices;
         public PersonController(IPersonServices personServices , ICountryServices countryServices)
