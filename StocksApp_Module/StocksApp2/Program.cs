@@ -19,6 +19,7 @@ builder.Services.AddScoped<CountryRepositryContract, CountryRepository>();
  Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ContectManagerDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
  
  */
+
 builder.Services.AddSingleton<IStocksService, StocksService>();
 
 builder.Services.AddHttpClient<IFinnhubService, FinnhubService>(); 
@@ -56,3 +57,4 @@ app.UseStaticFiles();
 
 app.Run();
 
+public partial class Program { }
