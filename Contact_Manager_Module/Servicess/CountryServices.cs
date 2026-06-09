@@ -32,8 +32,8 @@ namespace Servicess
             if(string.IsNullOrEmpty(countryAddRequest.CountryName))
                 throw new ArgumentException("Country name cannot be null or empty.", nameof(countryAddRequest.CountryName));
 
-
-            if(CountriesRipositry.GetCountryByName(countryAddRequest.CountryName)!=null)
+            var existingCountry = await CountriesRipositry.GetCountryByName(countryAddRequest.CountryName);
+            if (existingCountry != null)
             {
                 throw new ArgumentException($"Country with name {countryAddRequest.CountryName} already exists.", nameof(countryAddRequest.CountryName));
             }
