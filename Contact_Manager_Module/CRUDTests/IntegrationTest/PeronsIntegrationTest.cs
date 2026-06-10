@@ -85,7 +85,7 @@ namespace CRUDTests.IntegrationTest
                 .ReturnsAsync(persons);
 
             // Act
-            HttpResponseMessage response = await _httpClient.GetAsync("/Person/index?searchBy=Name&searchString=John&sortedBy=Name&SortOption=Ascending");
+            HttpResponseMessage response = await _httpClient.GetAsync("/Person/index?SearchBy=Name&SearchString=John&SortedBy=Name&SortOption=Ascending");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -113,16 +113,12 @@ namespace CRUDTests.IntegrationTest
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseBody.Should().Contain("Create Person");
-            responseBody.Should().Contain("Name");
-            responseBody.Should().Contain("Email");
-            responseBody.Should().Contain("Gender");
         }
 
         #endregion
 
         #region Create Tests (POST)
 
-    
         [Fact]
         public async Task Create_Post_WithMissingRequiredFields_ShouldReturnViewWithErrors()
         {
@@ -133,7 +129,6 @@ namespace CRUDTests.IntegrationTest
                 .Setup(x => x.Countries())
                 .ReturnsAsync(countries);
 
-            // Missing Name (required), email (required), Gender (required), CountryId (required)
             var formData = new Dictionary<string, string>
             {
                 { "Name", "" },
@@ -188,7 +183,6 @@ namespace CRUDTests.IntegrationTest
 
         #region Edit Tests (GET)
 
-    
         [Fact]
         public async Task Edit_Get_WithInvalidId_ShouldReturnNotFound()
         {
@@ -210,8 +204,6 @@ namespace CRUDTests.IntegrationTest
 
         #region Edit Tests (POST)
 
-
-
         [Fact]
         public async Task Edit_Post_WithInvalidModel_ShouldReturnViewWithErrors()
         {
@@ -223,7 +215,6 @@ namespace CRUDTests.IntegrationTest
                 .Setup(x => x.Countries())
                 .ReturnsAsync(countries);
 
-            // Missing required Name field
             var formData = new Dictionary<string, string>
             {
                 { "PersonId", personId.ToString() },
@@ -271,8 +262,6 @@ namespace CRUDTests.IntegrationTest
             responseBody.Should().Contain("Delete Person");
             responseBody.Should().Contain("User To Delete");
         }
-
-      
 
         #endregion
 

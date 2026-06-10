@@ -3,6 +3,8 @@ using Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using ServiceContracts;
 using ServiceContracts.DTOs;
@@ -22,23 +24,32 @@ namespace CRUDTests.ControllersTest
         private readonly Mock<IPersonServices> _personServicesMock;
         private readonly Mock<ICountryServices> _countryServicesMock;
         private readonly Fixture _fixture;
+        private readonly Mock<ILogger<PersonController>> _controllerLoggerMock;
+        private readonly ILogger<PersonControllerTests> _testLogger;
 
         public PersonControllerTests()
         {
+            // Use NullLogger if you don't need actual logging in tests
+            _testLogger = NullLogger<PersonControllerTests>.Instance;
+
             _fixture = new Fixture();
 
-            // Fix circular reference issues in AutoFixture
+            // Configure AutoFixture to handle recursion
             _fixture.Behaviors.OfType<ThrowingRecursionBehavior>()
                 .ToList()
                 .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
+            // Initialize mocks
             _personServicesMock = new Mock<IPersonServices>();
             _countryServicesMock = new Mock<ICountryServices>();
+            _controllerLoggerMock = new Mock<ILogger<PersonController>>();
 
+            // Create controller with all dependencies
             _personController = new PersonController(
                 _personServicesMock.Object,
-                _countryServicesMock.Object
+                _countryServicesMock.Object,
+                _controllerLoggerMock.Object
             );
         }
 
@@ -128,14 +139,15 @@ namespace CRUDTests.ControllersTest
         #endregion
 
         #region Edit (GET)
+
         [Fact]
         public async Task Edit_Get_WithValidId_ShouldReturnViewWithPerson()
         {
             // Arrange
             Guid personId = Guid.NewGuid();
             PersonRespones person = _fixture.Build<PersonRespones>()
-                .With(p => p.Gender, "Male")  // Fix: Add valid gender value
-                .With(p => p.email, _fixture.Create<string>() + "@example.com")  // Fix: Valid email format
+                .With(p => p.Gender, "Male")
+                .With(p => p.email, _fixture.Create<string>() + "@example.com")
                 .Create();
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
@@ -472,8 +484,6 @@ namespace CRUDTests.ControllersTest
         #endregion
 
         #region Route Attribute Tests
-
-     
 
         [Fact]
         public void Index_HasCorrectRouteAttributes()

@@ -1,8 +1,10 @@
 ﻿using AutoFixture;
+using Castle.Core.Logging;
 using Entities;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using RepositryContracts;
 using ServiceContracts;
@@ -15,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+
 namespace CRUDTests
 {
     public class PersonServicesTest
@@ -23,7 +26,8 @@ namespace CRUDTests
         private readonly ICountryServices _countryServices;
         private readonly IFixture _fixture;
         private readonly Mock<PersonRepositryContract> _personRepositryContractMoq;
-       private readonly PersonRepositryContract _personRepositryContract;
+        private readonly PersonRepositryContract _personRepositryContract;
+
         public PersonServicesTest()
         {
             _fixture = new Fixture();
@@ -33,13 +37,17 @@ namespace CRUDTests
             DbContextMock<AppDBContext> dbContextMock = new DbContextMock<AppDBContext>(new DbContextOptionsBuilder<AppDBContext>().Options);
 
             _personRepositryContractMoq = new Mock<PersonRepositryContract>();
-            _personRepositryContract = _personRepositryContractMoq.Object;  
+            _personRepositryContract = _personRepositryContractMoq.Object;
 
             dbContextMock.CreateDbSetMock(temp => temp.Persons, persons);
             dbContextMock.CreateDbSetMock(temp => temp.Countries, countries);
 
-            _personServices = new Servicess.PersonServices(_personRepositryContract);
-        //    _countryServices = new Servicess.CountryServices(null);
+            // FIXED: Create logger mock instead of actual logger
+            var loggerMock = new Mock<ILogger<PersonServices>>();
+            ILogger<PersonServices> logger = loggerMock.Object;
+
+            _personServices = new Servicess.PersonServices(_personRepositryContract, logger);
+            //    _countryServices = new Servicess.CountryServices(null);
         }
 
         #region AddPerson Tests
@@ -79,17 +87,13 @@ namespace CRUDTests
                 .With(p => p.Gender, GenderOptions.Male)
                 .Create();
 
-
             Person person = personAddRequest.ToPerson();
-
             PersonRespones personResponesobj = person.ConvertToPersonRespons();
+
             // Act
-            var personResponse_expecteed  = await _personServices.AddPerson(personAddRequest);
-            
+            var personResponse_expecteed = await _personServices.AddPerson(personAddRequest);
 
             _personRepositryContractMoq.Setup(repo => repo.AddPerson(It.IsAny<Person>())).ReturnsAsync(personAddRequest.ToPerson());
-
-
 
             personResponse_expecteed.PersonId.Should().NotBe(Guid.Empty);
             personResponesobj.PersonId = personResponse_expecteed.PersonId;
@@ -106,19 +110,14 @@ namespace CRUDTests
             // Arrange
             Guid? personId = null;
 
-
-
             // Act
             var k = await _personServices.GetPersonByPersonId(personId);
-
-
 
             // Assert
             Assert.Null(k);
         }
 
         [Fact]
-
         public async Task GetPersonByPersonID_WithPersonID_ToBeSuccessful()
         {
             // Arrange
@@ -170,18 +169,15 @@ namespace CRUDTests
         .Create()
 };
 
+            _personRepositryContractMoq.Setup(repo => repo.GetAllPersons()).ReturnsAsync(persons);
 
-           _personRepositryContractMoq.Setup(repo => repo.GetAllPersons()).ReturnsAsync(persons);
-             
             List<PersonRespones> expected_persons = persons.Select(p => p.ConvertToPersonRespons()).ToList();
 
             // Act
             List<PersonRespones> actual_persons = await _personServices.GetAllPersons();
 
-
             // Assert
             actual_persons.Should().BeEquivalentTo(expected_persons);
-
         }
 
         #endregion
@@ -191,7 +187,6 @@ namespace CRUDTests
         [Fact]
         public async Task GetPersonsByName_EmptySearchText_ToBeSuccessful()
         {
-
             List<Person> persons = new List<Person>()
 {
     _fixture.Build<Person>()
@@ -215,20 +210,16 @@ namespace CRUDTests
 
             _personRepositryContractMoq.Setup(repo => repo.GetAllPersons()).ReturnsAsync(persons);
 
-
             // Act
             List<PersonRespones> actualList = await _personServices.SearchPersonsBy(nameof(Person.Name), string.Empty);
+
             // Assert
-
-
             actualList.Should().BeEquivalentTo(persons.Select(p => p.ConvertToPersonRespons()).ToList());
         }
 
         [Fact]
-        public async Task  GetFilteredPersons_EmptySearchText_ToBeSuccess()
+        public async Task GetFilteredPersons_EmptySearchText_ToBeSuccess()
         {
-
-
             List<Person> persons = new List<Person>()
 {
     _fixture.Build<Person>()
@@ -252,14 +243,11 @@ namespace CRUDTests
 
             _personRepositryContractMoq.Setup(repo => repo.GetAllPersons()).ReturnsAsync(persons);
 
-
             // Act
             List<PersonRespones> actualList = await _personServices.SearchPersonsBy(nameof(Person.Name), "sa");
+
             // Assert
-
-
             actualList.Should().BeEquivalentTo(persons.Select(p => p.ConvertToPersonRespons()).ToList());
-
         }
 
         #endregion
@@ -270,8 +258,6 @@ namespace CRUDTests
         public async Task GetPersonsSorted_DESC_Test()
         {
             // Arrange
-         
-        
             List<Person> persons = new List<Person>()
 {
     _fixture.Build<Person>()
@@ -296,13 +282,11 @@ namespace CRUDTests
             _personRepositryContractMoq.Setup(repo => repo.GetAllPersons()).ReturnsAsync(persons);
 
             var personToSort = persons.Select(p => p.ConvertToPersonRespons()).ToList();
-           
 
             // Act
             List<PersonRespones> actualList = await _personServices.getPersonsSorted(personToSort, nameof(Person.Name), sortedListOp.Descending);
+
             // Assert
-
-
             actualList.Should().BeInDescendingOrder(p => p.Name);
         }
 
@@ -342,10 +326,8 @@ namespace CRUDTests
             Person person = _fixture.Build<Person>()
                 .With(p => p.email, "test@example.com")
                 .With(p => p.phone, "123456789")
-                .Without(p => p.Country) 
-
-                  .With(p => p.Gender, "Male")
-
+                .Without(p => p.Country)
+                .With(p => p.Gender, "Male")
                 .Create();
 
             _personRepositryContractMoq.Setup(repo => repo.UpdatePerson(It.IsAny<Person>())).ReturnsAsync(person);
@@ -356,6 +338,7 @@ namespace CRUDTests
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(async () => await _personServices.UpdatePerson(ToUpdate));
         }
+
         [Fact]
         public async Task UpdatePerson_ProperDetails_Test()
         {
@@ -364,20 +347,17 @@ namespace CRUDTests
                 .With(p => p.email, "test@example.com")
                 .With(p => p.phone, "123456789")
                 .Without(p => p.Country)
-                  .With(p => p.Gender, "Male")
+                .With(p => p.Gender, "Male")
                 .Create();
 
             _personRepositryContractMoq.Setup(repo => repo.UpdatePerson(It.IsAny<Person>())).ReturnsAsync(person);
 
             PersonUpdateRequest ToUpdate = person.ConvertToPersonRespons().ToPersonUpdateRequest();
             ToUpdate.Name = "karim";
-             ToUpdate.DateOfBirth = new DateTime(1990, 1, 1);
+            ToUpdate.DateOfBirth = new DateTime(1990, 1, 1);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(async () => await _personServices.UpdatePerson(ToUpdate));
-
-
-
         }
 
         #endregion
@@ -397,7 +377,6 @@ namespace CRUDTests
         [Fact]
         public async Task DeletePersonByPersonId_ValidTest_Test()
         {
-            
             Person person = _fixture.Build<Person>()
                  .With(p => p.PersonId, Guid.NewGuid())
                  .With(p => p.email, "test@example.com")
@@ -410,22 +389,21 @@ namespace CRUDTests
             _personRepositryContractMoq
                 .Setup(repo => repo.DeletePerson(It.IsAny<Guid?>()))
                 .ReturnsAsync(true);
-     
+
             _personRepositryContractMoq.Setup(repo => repo.GetPersonById(It.IsAny<Guid>()))
                .ReturnsAsync(person);
 
             // Act
-            // FIX: Await the async method properly instead of using .Result
             bool isTrue = await _personServices.DeletePersonByPersonId(person.PersonId);
 
             // Assert
             Assert.True(isTrue);
         }
+
         [Fact]
         public async Task DeletePersonByPersonId_InValidTest_Test()
         {
             // Arrange
-
             Person person = _fixture.Build<Person>()
                  .With(p => p.PersonId, Guid.NewGuid())
                  .With(p => p.email, "test@example.com")
@@ -438,14 +416,15 @@ namespace CRUDTests
             _personRepositryContractMoq
                 .Setup(repo => repo.DeletePerson(It.IsAny<Guid?>()))
                 .ReturnsAsync(false);
+
             _personRepositryContractMoq.Setup(repo => repo.GetPersonById(It.IsAny<Guid>()))
                 .ReturnsAsync(person);
+
             // Act
-            // FIX: Await the async method properly instead of using .Result
-            bool isflase = await _personServices.DeletePersonByPersonId(Guid.NewGuid());
+            bool isfalse = await _personServices.DeletePersonByPersonId(Guid.NewGuid());
 
             // Assert
-            Assert.True(!isflase);
+            Assert.True(!isfalse);
         }
 
         #endregion

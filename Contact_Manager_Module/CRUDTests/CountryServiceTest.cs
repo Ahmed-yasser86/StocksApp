@@ -3,10 +3,12 @@ using Entities;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using RepositryContracts;
 using ServiceContracts;
 using ServiceContracts.DTOs;
+using Servicess;
 using Xunit;
 
 namespace CRUDTests
@@ -31,9 +33,8 @@ namespace CRUDTests
             // Setup mock repository
             _countryRepositryContractMoq = new Mock<CountryRepositryContract>();
             _countryRepositryContract = _countryRepositryContractMoq.Object;
-
-            // Inject the mocked repository into the service
-            _countryServices = new Servicess.CountryServices(_countryRepositryContract);
+            ILogger<CountryServices> logger = new Mock<ILogger<CountryServices>>().Object;
+            _countryServices = new Servicess.CountryServices(_countryRepositryContract, logger);
         }
 
         #region AddCountryRequest Tests

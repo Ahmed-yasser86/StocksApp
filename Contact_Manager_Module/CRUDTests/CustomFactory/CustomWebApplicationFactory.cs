@@ -7,6 +7,7 @@ using ServiceContracts.DTOs;
 using ServiceContracts.DTOs.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CRUDTests.CustomFactory
 {
@@ -25,19 +26,17 @@ namespace CRUDTests.CustomFactory
         {
             builder.ConfigureServices(services =>
             {
-                // Remove existing service registrations
-                var personServiceDescriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(IPersonServices));
-                if (personServiceDescriptor != null)
+                // FIX: Remove ALL existing service registrations (not just one)
+                var personServiceDescriptors = services.Where(d => d.ServiceType == typeof(IPersonServices)).ToList();
+                foreach (var descriptor in personServiceDescriptors)
                 {
-                    services.Remove(personServiceDescriptor);
+                    services.Remove(descriptor);
                 }
 
-                var countryServiceDescriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(ICountryServices));
-                if (countryServiceDescriptor != null)
+                var countryServiceDescriptors = services.Where(d => d.ServiceType == typeof(ICountryServices)).ToList();
+                foreach (var descriptor in countryServiceDescriptors)
                 {
-                    services.Remove(countryServiceDescriptor);
+                    services.Remove(descriptor);
                 }
 
                 // Add mocked services
