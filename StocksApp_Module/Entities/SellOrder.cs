@@ -10,19 +10,19 @@ namespace Entities
     public class SellOrder
     {
         [Key]
-        Guid SellOrderID;
+        public Guid SellOrderID { get; set; }
         [Required]
-        string StockSymbol;
+        public string StockSymbol { get; set; }
 
         [Required]
-        string StockName;
+        public string StockName { get; set; }   
 
-        DateTime DateAndTimeOfOrder;
+        public DateTime DateAndTimeOfOrder { get; set; }
         [Range(1, 100000)]
-        uint Quantity;//[Value should be between 1 and 100000]
+        public uint Quantity { get; set; } //[Value should be between 1 and 100000]
 
         [Range(1, 100000)]
-        double Price;//
+        public double Price { get; set; }   
 
 
     }

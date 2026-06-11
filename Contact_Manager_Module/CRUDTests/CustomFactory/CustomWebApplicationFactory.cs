@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace CRUDTests.CustomFactory
 {
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
@@ -26,7 +27,6 @@ namespace CRUDTests.CustomFactory
         {
             builder.ConfigureServices(services =>
             {
-                // FIX: Remove ALL existing service registrations (not just one)
                 var personServiceDescriptors = services.Where(d => d.ServiceType == typeof(IPersonServices)).ToList();
                 foreach (var descriptor in personServiceDescriptors)
                 {

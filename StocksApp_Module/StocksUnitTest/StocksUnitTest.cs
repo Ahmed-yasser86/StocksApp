@@ -3,12 +3,14 @@ using Moq;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
-using StocksApp2;
+using ServiceContractsContacts;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.Extensions.Logging;
+using RepositoryContracts;
 
 namespace StocksUnitTest
 {
@@ -18,7 +20,8 @@ namespace StocksUnitTest
         private readonly IFinnhubService _finnhubService;
         private readonly Mock<HttpMessageHandler> _handlerMock;
         private readonly IOptions<TradingOptions> _options;
-
+        private readonly Mock<ILogger<StocksService>> _loggerMock;
+        private readonly Mock<IStocksRepository> _stocksRepositoryMock;
         public StocksUnitTest()
         {
             _handlerMock = new Mock<HttpMessageHandler>();
@@ -37,9 +40,11 @@ namespace StocksUnitTest
             // Pass options to FinnhubService instead of IConfiguration
             _finnhubService = new FinnhubService(httpClient, _options);
 
-            _stocksService = new StocksService(_finnhubService);
+                        _loggerMock = new Mock<ILogger<StocksService>>();
+            _stocksRepositoryMock = new Mock<IStocksRepository>();
+            _stocksService = new StocksService( _stocksRepositoryMock.Object,_loggerMock.Object);
         }
-
+        
         #region CreateBuyOrder
 
         public async Task CreateBuyOrder_InsertNullValue()

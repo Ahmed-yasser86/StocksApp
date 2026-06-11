@@ -5,7 +5,7 @@ using ServiceContracts;
 using StocksApp2.Areas.Stocks.Models;
 using System.Reflection;
 using System.Text.Json;
-
+using ServiceContractsContacts;
 namespace StocksApp2.Areas.StocksUIComponent.Controllers
 {
 
@@ -58,6 +58,7 @@ namespace StocksApp2.Areas.StocksUIComponent.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
+
         public async Task<IActionResult> SellOrders(StockTrade stockInfo)
         {
             await _stocksService.CreateSellOrder(new ServiceContracts.DTO.SellOrderRequest

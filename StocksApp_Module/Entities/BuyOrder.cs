@@ -14,7 +14,7 @@ namespace Entities
         [Required]
     public    string StockName { set; get; }
 
-        DateTime DateAndTimeOfOrder { set; get; }
+     public   DateTime DateAndTimeOfOrder { set; get; }
         [Range(1,100000)]
        public uint Quantity;//[Value should be between 1 and 100000]
        

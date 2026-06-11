@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ContactManagerModule", "Con
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StocksModule", "StocksModule", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesContacts", "..\Entities\EntitiesContacts.csproj", "{706FCD65-630C-4D6E-8DF1-F7F3AF73E4E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesStocks", "..\Entities\EntitiesStocks.csproj", "{706FCD65-630C-4D6E-8DF1-F7F3AF73E4E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceContractsContacts", "..\ServiceContracts\ServiceContractsContacts.csproj", "{60AB71C8-D741-44CB-86E5-DD807007D9A8}"
 EndProject
@@ -28,6 +28,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositryContracts", "..\RepositryContracts\RepositryContracts.csproj", "{3BA8CE4E-438F-4922-B4B0-9EAA652D7FEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "..\Repositories\Repositories.csproj", "{E63775FB-4BF1-44D1-934F-F954CDB28871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryContracts", "..\RipositoryContracts\RepositoryContracts.csproj", "{07F03E84-A17C-413C-9BED-2EBCB0CA3916}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories_Stocks", "..\Repositories_Stocks\Repositories_Stocks.csproj", "{2D70C6C1-2482-4441-9077-B5E030BEC38D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +83,14 @@ Global
 		{E63775FB-4BF1-44D1-934F-F954CDB28871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E63775FB-4BF1-44D1-934F-F954CDB28871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E63775FB-4BF1-44D1-934F-F954CDB28871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07F03E84-A17C-413C-9BED-2EBCB0CA3916}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F03E84-A17C-413C-9BED-2EBCB0CA3916}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F03E84-A17C-413C-9BED-2EBCB0CA3916}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F03E84-A17C-413C-9BED-2EBCB0CA3916}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D70C6C1-2482-4441-9077-B5E030BEC38D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D70C6C1-2482-4441-9077-B5E030BEC38D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D70C6C1-2482-4441-9077-B5E030BEC38D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D70C6C1-2482-4441-9077-B5E030BEC38D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +106,8 @@ Global
 		{D285D667-175A-4803-B08C-7818A01233C9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3BA8CE4E-438F-4922-B4B0-9EAA652D7FEE} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{E63775FB-4BF1-44D1-934F-F954CDB28871} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{07F03E84-A17C-413C-9BED-2EBCB0CA3916} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{2D70C6C1-2482-4441-9077-B5E030BEC38D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {554FC105-4DCF-49AE-8FC5-2AA70BB926FF}

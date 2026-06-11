@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,26 @@ namespace ServiceContracts.DTO
         public double Price { set; get; }
 
         public double TradeAmount { set; get; }
-    
+
+    }
+
+
+
+    public static class SellOrderExtensions
+    {
+        public static SellOrderResponse ConvertToSellOrderResponse(this SellOrder order)
+        {
+            return new SellOrderResponse
+            {
+                SellOrderID = order.SellOrderID,
+                StockSymbol = order.StockSymbol,
+                StockName = order.StockName,
+                DateAndTimeOfOrder = order.DateAndTimeOfOrder,
+                Quantity = order.Quantity,
+                Price = order.Price,
+                TradeAmount = (double)order.Price * (double)order.Quantity
+            };
         }
 
     }
+}

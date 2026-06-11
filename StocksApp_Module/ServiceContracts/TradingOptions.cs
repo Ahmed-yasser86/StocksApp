@@ -1,4 +1,8 @@
-﻿namespace StocksApp2
+﻿
+
+
+
+namespace ServiceContractsContacts
 {
     public class TradingOptions
     {

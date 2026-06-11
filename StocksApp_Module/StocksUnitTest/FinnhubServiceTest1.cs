@@ -4,13 +4,12 @@ using Moq;
 using Moq.Protected;
 using ServiceContracts;
 using Services;
-using StocksApp2;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-
+using ServiceContractsContacts;
 namespace StocksUnitTest
 {
     public class FinnhubServiceTest1
