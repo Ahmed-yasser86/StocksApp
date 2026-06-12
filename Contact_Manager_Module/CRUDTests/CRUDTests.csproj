@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\StocksApp_Module\Entities\EntitiesContacts.csproj" />
+    <ProjectReference Include="..\..\StocksApp_Module\Entities\EntitiesStocks.csproj" />
     <ProjectReference Include="..\..\StocksApp_Module\Repositories\Repositories.csproj" />
     <ProjectReference Include="..\..\StocksApp_Module\RepositryContracts\RepositryContracts.csproj" />
     <ProjectReference Include="..\..\StocksApp_Module\ServiceContracts\ServiceContractsContacts.csproj" />
