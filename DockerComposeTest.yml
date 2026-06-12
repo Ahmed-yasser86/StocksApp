@@ -9,6 +9,8 @@ services:
     ports:
       - "1433:1433"
     restart: always
+    volumes:
+      - sqlserver_data:/var/opt/mssql       
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong@Pass123' -Q 'SELECT 1' -No || exit 1"]
       interval: 10s
@@ -31,3 +33,6 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__ContactDb=Server=app_database,1433;Database=ContectManagerDB;User Id=sa;Password=YourStrong@Pass123;Encrypt=False;TrustServerCertificate=True;
       - ConnectionStrings__StocksDbConnection=Server=app_database,1433;Database=StocksDb;User Id=sa;Password=YourStrong@Pass123;Encrypt=False;TrustServerCertificate=True;
+
+volumes:
+  sqlserver_data:                          
