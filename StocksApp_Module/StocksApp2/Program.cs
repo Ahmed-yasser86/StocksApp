@@ -7,12 +7,13 @@ using Serilog;
 using ServiceContracts;
 using Services;
 using Servicess;
-using RepositoryContracts; // For IStocksRepository
-using Repositories_Stocks; // For StocksRepository
+using RepositoryContracts;
+using Repositories_Stocks;
 using StocksApp2;
 using ServiceContractsContacts;
 using EntitiesStocks;
 using Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
@@ -32,32 +33,38 @@ builder.Services.AddScoped<ICountryServices, CountryServices>();
 builder.Services.AddScoped<IPersonServices, PersonServices>();
 
 // ========== FINNHUB (NO DATABASE) ==========
-// Register HttpClient for FinnhubRepository
 builder.Services.AddHttpClient<IFinnhubRepository, FinnhubRepository>();
-
-// Register Repository and Service
 builder.Services.AddScoped<IFinnhubRepository, FinnhubRepository>();
 builder.Services.AddScoped<IFinnhubService, FinnhubService>();
 
 // ========== STOCKS (WITH DATABASE) ==========
-// Register Stocks Repository
-builder.Services.AddScoped<IStocksRepository, StocksRepository>();  // ← YOU MISSED THIS!
-
-// Register Stocks Service (USE SCOPED, NOT SINGLETON!)
-builder.Services.AddScoped<IStocksService, StocksService>();  // Changed from Singleton to Scoped
+builder.Services.AddScoped<IStocksRepository, StocksRepository>();
+builder.Services.AddScoped<IStocksService, StocksService>();
 
 // ========== DATABASE CONTEXTS ==========
-builder.Services.AddDbContext<AppDBContext>(
-    Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("ContactDb"))
+builder.Services.AddDbContext<AppDBContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ContactDb"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null)
+    )
 );
-
-// For Stocks DbContext
 
 builder.Services.AddDbContext<StocksDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("StocksDbConnection"),
-        b => b.MigrationsAssembly("EntitiesStocks")
-    ));
+        sqlOptions =>
+        {
+            sqlOptions.MigrationsAssembly("EntitiesStocks");
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorNumbersToAdd: null);
+        }
+    )
+);
 
 // ========== CONFIGURATION ==========
 builder.Services.Configure<TradingOptions>(
@@ -66,19 +73,34 @@ builder.Services.Configure<TradingOptions>(
 // ========== HTTP LOGGING ==========
 builder.Services.AddHttpLogging(options =>
 {
-    options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPropertiesAndHeaders | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
+    options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPropertiesAndHeaders |
+                            Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
 });
 
 var app = builder.Build();
 
-
+// ========== MIGRATIONS WITH RETRY ==========
 using (var scope = app.Services.CreateScope())
 {
-    var contactDb = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-    await contactDb.Database.MigrateAsync();
+    var maxRetries = 5;
+    for (int i = 0; i < maxRetries; i++)
+    {
+        try
+        {
+            var contactDb = scope.ServiceProvider.GetRequiredService<AppDBContext>();
+            await contactDb.Database.MigrateAsync();
 
-    var stocksDb = scope.ServiceProvider.GetRequiredService<StocksDbContext>();
-    await stocksDb.Database.MigrateAsync();
+            var stocksDb = scope.ServiceProvider.GetRequiredService<StocksDbContext>();
+            await stocksDb.Database.MigrateAsync();
+            break;
+        }
+        catch (Exception ex)
+        {
+            if (i == maxRetries - 1) throw;
+            Console.WriteLine($"Migration attempt {i + 1} failed: {ex.Message}. Retrying in 5s...");
+            await Task.Delay(5000);
+        }
+    }
 }
 
 if (builder.Environment.IsDevelopment())
@@ -88,6 +110,11 @@ if (builder.Environment.IsDevelopment())
 
 app.UseHttpLogging();
 app.UseRouting();
+app.UseStaticFiles();
+
+// ========== HEALTH CHECK ==========
+app.MapGet("/health", () => Results.Ok("Healthy"));
+
 app.MapControllers();
 
 app.MapControllerRoute(
@@ -98,9 +125,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Trade}/{action=Index}/{id?}");
 
-app.UseStaticFiles();
-
 app.Run();
-
 
 public partial class Program { }
