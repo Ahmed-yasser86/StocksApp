@@ -103,6 +103,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+Console.WriteLine("app started");
+
 if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

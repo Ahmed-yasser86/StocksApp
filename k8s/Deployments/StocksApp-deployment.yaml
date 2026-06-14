@@ -5,7 +5,12 @@ metadata:
   labels:
     app: stocksapp
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: stocksapp
@@ -21,25 +26,35 @@ spec:
           - sh
           - -c
           - |
-            until /opt/mssql-tools18/bin/sqlcmd -S db-service -U sa -P YourStrong@Pass123 -Q 'SELECT 1' -No; do
+            until /opt/mssql-tools18/bin/sqlcmd -S db-service -U sa -P $SA_PASSWORD -Q 'SELECT 1' -No; do
               echo "Waiting for SQL Server..."
               sleep 5
             done
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stocksapp-secret
+              key: SA_PASSWORD
       containers:
       - name: stocksapp
         image: stocksapp-main-taskmanager.api:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: stocksapp-config
         env:
-        - name: ASPNETCORE_ENVIRONMENT
-          value: "Development"
-        - name: ASPNETCORE_URLS
-          value: "http://+:8080"
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: stocksapp-secret
+              key: SA_PASSWORD
         - name: ConnectionStrings__ContactDb
-          value: "Server=db-service,1433;Database=ContectManagerDB;User Id=sa;Password=YourStrong@Pass123;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
+          value: "Server=db-service,1433;Database=ContectManagerDB;User Id=sa;Password=$(SA_PASSWORD);TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
         - name: ConnectionStrings__StocksDbConnection
-          value: "Server=db-service,1433;Database=StocksDb;User Id=sa;Password=YourStrong@Pass123;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
+          value: "Server=db-service,1433;Database=StocksDb;User Id=sa;Password=$(SA_PASSWORD);TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True;"
         resources:
           requests:
             memory: "512Mi"
